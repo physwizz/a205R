@@ -594,6 +594,46 @@ static ssize_t set_gpu_throttling2(struct device *dev, struct device_attribute *
 		return -ENOENT;
 	}
 
+
+	return count;
+}
+
+static ssize_t show_gpu_throttling2(struct device *dev, struct device_attribute *attr, char *buf)
+{
+	ssize_t ret = 0;
+	struct exynos_context *platform = (struct exynos_context *)pkbdev->platform_context;
+
+	if (!platform)
+		return -ENODEV;
+
+	ret += snprintf(buf+ret, PAGE_SIZE-ret, "%d", platform->tmu_lock_clk[THROTTLING2]);
+
+	if (ret < PAGE_SIZE - 1) {
+		ret += snprintf(buf+ret, PAGE_SIZE-ret, "\n");
+	} else {
+		buf[PAGE_SIZE-2] = '\n';
+		buf[PAGE_SIZE-1] = '\0';
+		ret = PAGE_SIZE-1;
+	}
+
+	return ret;
+}
+
+static ssize_t set_gpu_throttling2(struct device *dev, struct device_attribute *attr, const char *buf, size_t count)
+{
+	int ret, throttling2;
+	struct exynos_context *platform = (struct exynos_context *)pkbdev->platform_context;
+
+	if (!platform)
+		return -ENODEV;
+
+	ret = kstrtoint(buf, 0, &throttling2);
+
+	if (ret) {
+		GPU_LOG(DVFS_WARNING, DUMMY, 0u, 0u, "%s: invalid value\n", __func__);
+		return -ENOENT;
+	}
+
 	if ((throttling2 < platform->gpu_min_clock) || (throttling2 > platform->gpu_max_clock)) {
 		GPU_LOG(DVFS_WARNING, DUMMY, 0u, 0u, "%s: out of range (%d)\n", __func__, throttling2);
 		return -ENOENT;
@@ -1522,10 +1562,6 @@ static ssize_t show_trace_dump(struct device *dev, struct device_attribute *attr
 
 		kbasep_trace_format_msg(trace_msg, buffer, KBASE_TRACE_SIZE);
 		ret += snprintf(buf+ret, PAGE_SIZE-ret, "%s\n", buffer);
-
-        if (ret >= PAGE_SIZE - 1)
-            break;
-
 		start = (start + 1) & KBASE_TRACE_MASK;
 	}
 
