@@ -1086,7 +1086,7 @@ static int init_dm(struct exynos_cpufreq_domain *domain,
 
 /*physwizz underclocking*/
 /*Underclocking little cores to 208MHz*/
-static unsigned long arg_cpu_min_c1 = 208000; 
+static unsigned long arg_cpu_min_c1 = 343000; 
 static int __init cpufreq_read_cpu_min_c1(char *cpu_min_c1) /*integer remains in memory after function call*/
 {
 	unsigned long ui_khz;
@@ -1103,7 +1103,7 @@ static int __init cpufreq_read_cpu_min_c1(char *cpu_min_c1) /*integer remains in
 __setup("cpu_min_c1=", cpufreq_read_cpu_min_c1);
 
 /*Underclocking big cores to 208MHz*/
-unsigned long arg_cpu_min_c2 = 208000; 
+unsigned long arg_cpu_min_c2 = 312000; 
 
 static __init int cpufreq_read_cpu_min_c2(char *cpu_min_c2)
 {
