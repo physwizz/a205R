@@ -170,9 +170,13 @@ static ssize_t sel_write_enforce(struct file *file, const char __user *buf,
 		goto out;
 
 
-	new_value = !!new_value;
+//	new_value = !!new_value;
 
-	old_value = enforcing_enabled(state);
+int old_value;
+int state;
+int selinux_state;
+
+//	old_value = enforcing_enabled(state);
 #ifdef CONFIG_SECURITY_SELINUX_ALWAYS_ENFORCE
 	// If always enforce option is set, selinux is always enforcing
 	new_value = 1;
@@ -183,8 +187,7 @@ static ssize_t sel_write_enforce(struct file *file, const char __user *buf,
 	if (new_value != old_value) {
 		length = avc_has_perm(&selinux_state,
 				      current_sid(), SECINITSID_SECURITY,
-				      SECCLASS_SECURITY, SECURITY__SETENFORCE,
-				      NULL);
+				      SECCLASS_SECURITY, SECURITY__SETENFORCE);
 
 		if (length)
 			goto out;
